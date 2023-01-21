@@ -1,0 +1,77 @@
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N '\n'
+#define Fast ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+const ll maxn=1e5+9;
+
+
+vector<ll>adj[maxn];
+vector<ll>d(maxn);
+vector<ll>low(maxn);
+vector<ll>ap(maxn);
+ll n,m;
+ll Time=0;
+
+ll dfsAP(ll u,ll p)
+{
+    ll children=0;
+    low[u]=d[u]=++Time;
+    for(auto v:adj[u])
+    {
+        if(v!=p)
+        {
+            if(!d[v])
+            {
+                children++;
+                dfsAP(v,u);
+                if(d[u]<=low[v])
+                {
+                    ap[u]=1;
+                }
+                low[u]=min(low[u],low[v]);
+            }
+            else
+            {
+                low[u]=min(low[u],d[v]);
+            }
+        }
+    }
+    return children;
+}
+
+void AP()
+{
+    //ap=low=d=vector<ll>(adj.size);
+    Time=0;
+    for(ll u=1;u<=n;u++)
+    {
+        if(!d[u])
+        {
+            ap[u]=dfsAP(u,u)>1;
+        }
+    }
+}
+
+int main()
+{
+    cin>>n>>m;
+    for(ll i=1;i<=m;i++)
+    {
+        ll u,v;
+        cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    AP();
+    for(ll i=1;i<=n;i++)
+    {
+        cout<<ap[i]<<" ";
+    }
+    cout<<N;
+    return 0;
+}
