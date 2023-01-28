@@ -16,51 +16,38 @@ vector<ll>ap(maxn);
 ll n,m;
 ll Time=0;
 
-ll dfsAP(ll u,ll p)
-{
-    ll children=0;
+int dfsAP(int u, int p) {
+    int children=0;
     low[u]=d[u]=++Time;
-    for(auto v:adj[u])
+    for (int v:adj[u])
     {
-        if(v!=p)
+        if(v==p)continue;
+        if(!d[v])
         {
-            if(!d[v])
-            {
-                children++;
-                dfsAP(v,u);
-                if(d[u]<=low[v])
-                {
-                    ap[u]=1;
-                }
-                low[u]=min(low[u],low[v]);
-            }
-            else
-            {
-                low[u]=min(low[u],d[v]);
-            }
+            children++;
+            dfsAP(v,u);
+            if(d[u]<=low[v])ap[u]=1;
+            low[u]=min(low[u],low[v]);
         }
+        else low[u]=min(low[u],d[v]);
     }
     return children;
 }
 
-void AP()
-{
-    //ap=low=d=vector<ll>(adj.size);
+void AP() {
+    //ap = low = d = vector<int>(adj.size());
     Time=0;
-    for(ll u=1;u<=n;u++)
-    {
-        if(!d[u])
-        {
-            ap[u]=dfsAP(u,u)>1;
-        }
-    }
+    for(int u=1;u<=n;u++)if(!d[u])ap[u]=dfsAP(u,u)>1;
 }
 
-int main()
-{
+void solve(ll tst) {
     cin>>n>>m;
-    for(ll i=1;i<=m;i++)
+    for(ll i=1;i<=n;i++)
     {
+        adj[i].clear();
+        d[i]=0,ap[i]=0,low[i]=0;
+    }
+    for(ll i=1; i<=m; i++) {
         ll u,v;
         cin>>u>>v;
         adj[u].push_back(v);
@@ -68,10 +55,26 @@ int main()
     }
 
     AP();
+
+    ll cnt=0;
+
     for(ll i=1;i<=n;i++)
     {
-        cout<<ap[i]<<" ";
+        if(ap[i])
+        {
+            cnt++;
+        }
     }
-    cout<<N;
+    cout<<"Case "<<tst<<": "<<cnt<<N;
+}
+int main()
+{
+    Fast;
+    ll t=1;
+    cin>>t;
+    ll tst=0;
+    while(t--) {
+        solve(++tst);
+    }
     return 0;
 }
